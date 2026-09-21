@@ -27,6 +27,31 @@ npm run dev        # http://localhost:5173  (mock 모드)
 
 mock 모드에서는 백엔드 없이 로그인·상태 전환(켜기/끄기)·이력을 브라우저 안에서 흉내 냅니다. 사이드바에 `MOCK 모드` 배지가 보입니다.
 
+## 화면
+
+`npm run dev`(mock 모드) 기준 캡처입니다. 데스크톱(1440px) 기준 화면입니다.
+
+### 로그인
+![로그인](docs/screenshots/01-login.png)
+
+### 서버 제어 — 켜져 있을 때
+![서버 제어 (켜짐)](docs/screenshots/02-server-on.png)
+
+### 서버 끄기 확인
+![서버 끄기 확인 모달](docs/screenshots/03-confirm-stop.png)
+
+### 서버 끄는 중 — 모니터링 끄기 → EC2 중지 → 완료
+![서버 끄는 중](docs/screenshots/04-stopping.png)
+
+### 서버 제어 — 꺼져 있을 때
+![서버 제어 (꺼짐)](docs/screenshots/05-server-off.png)
+
+### 서버 켜는 중 — EC2 시작 → 앱 헬스 확인 → 모니터링 켜기 → 완료
+![서버 켜는 중](docs/screenshots/06-starting.png)
+
+### 서비스 운영 (준비 중)
+![서비스 운영](docs/screenshots/07-admin-placeholder.png)
+
 ## 환경 변수
 
 `.env.example` 참고. 실제 API 로 붙일 때는 `.env.local` 에 작성합니다.
