@@ -1,0 +1,48 @@
+@import 'tailwindcss';
+
+/*
+ * 디자인 토큰 — Figma "대시보드" 파일(main / Sidebar Wrapper)에서 추출.
+ * Figma 변수명 → 토큰: Neutral 800 = bg, Neutral 600 = surface, Neutral 700 = surface-alt,
+ * Neutral 400 = muted, Neutral 500 = subtle, Secondary 4 = border, Primary 1 = primary.
+ */
+@theme {
+  --font-sans: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+    'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+
+  --color-bg: #081028;
+  --color-surface: #0b1739;
+  --color-surface-alt: #0a1330;
+  --color-border: #343b4f;
+  --color-muted: #aeb9e1;
+  --color-subtle: #7e89ac;
+
+  --color-primary: #cb3cff;
+  --color-primary-deep: #7f25fb;
+  --color-accent: #00c2ff;
+  --color-accent-soft: #9a91fb;
+
+  --color-success: #14ca74;
+  --color-warning: #ffb016;
+  --color-danger: #ff5a65;
+
+  --shadow-panel: 0 8px 28px 0 rgb(1 5 17 / 0.3);
+}
+
+@utility bg-primary-gradient {
+  background-image: linear-gradient(166.5deg, #cb3cff 19.855%, #7f25fb 68.339%);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-bg font-sans text-white antialiased;
+  }
+
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+}
