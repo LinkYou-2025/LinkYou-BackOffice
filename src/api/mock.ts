@@ -22,7 +22,7 @@ const state: MockState = { ec2: 'running', app: 'up', monitoring: 'active' }
 
 const history: HistoryItem[] = [
   { id: 'seed-3', at: minutesAgo(35), user: 'octocat', action: 'START', result: 'SUCCESS' },
-  { id: 'seed-2', at: minutesAgo(600), user: 'hubot', action: 'STOP', result: 'SUCCESS' },
+  { id: 'seed-2', at: minutesAgo(600), user: 'hubot', action: 'STOP', result: 'SUCCESS', reason: '야간 비용 절감' },
   { id: 'seed-1', at: minutesAgo(610), user: 'hubot', action: 'LOGIN', result: 'SUCCESS' },
 ]
 
@@ -40,13 +40,14 @@ function later(ms: number, fn: () => void) {
   setTimeout(fn, ms)
 }
 
-function record(action: HistoryAction) {
+function record(action: HistoryAction, reason?: string) {
   history.unshift({
     id: `mock-${++seq}`,
     at: new Date().toISOString(),
     user: MOCK_USER,
     action,
     result: 'SUCCESS',
+    ...(reason ? { reason } : {}),
   })
 }
 
@@ -74,12 +75,15 @@ export const mockServerApi: ServerApi = {
     })
   },
 
-  async stop() {
+  async stop(reason) {
     await delay(300)
+    if (reason.trim().length < 2) {
+      throw new ApiError(400, '서버를 끄는 사유를 2자 이상 100자 이하로 입력해 주세요.')
+    }
     if (state.ec2 !== 'running') {
       throw new ApiError(409, '서버가 이미 꺼져 있거나 전환 중이에요.')
     }
-    record('STOP')
+    record('STOP', reason.trim())
     state.monitoring = 'muted'
     later(1_500, () => {
       state.ec2 = 'stopping'

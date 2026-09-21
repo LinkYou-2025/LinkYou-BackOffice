@@ -26,7 +26,8 @@ export function useServerHistory() {
 export function useServerAction() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (action: ServerAction) => (action === 'START' ? serverApi.start() : serverApi.stop()),
+    mutationFn: ({ action, reason }: { action: ServerAction; reason?: string }) =>
+      action === 'START' ? serverApi.start() : serverApi.stop(reason ?? ''),
     onSettled: () => queryClient.invalidateQueries({ queryKey: ['server'] }),
   })
 }

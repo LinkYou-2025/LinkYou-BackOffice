@@ -54,7 +54,10 @@ export async function request<T>(path: string, init: RequestInit = {}): Promise<
     throw new ApiError(0, '서버에 연결할 수 없어요. 네트워크 상태를 확인해 주세요.')
   }
 
-  if (res.status === 401) {
+  // Lambda authorizer 가 토큰을 거부하면 API Gateway 는 401 이 아니라 403 을 돌려줌
+  // 토큰 없이 보내는 로그인 요청의 403 은 조직 멤버가 아니라는 뜻이라 세션 만료로 보지 않음
+  const sessionRejected = res.status === 401 || (res.status === 403 && token !== null)
+  if (sessionRejected) {
     handlers.onUnauthorized()
     throw new ApiError(401, '로그인이 만료됐어요. 다시 로그인해 주세요.')
   }
