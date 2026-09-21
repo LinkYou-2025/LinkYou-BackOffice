@@ -13,8 +13,6 @@ LinkYou 프로젝트의 인프라 관리 & 서비스 운영을 위한 BackOffice
 ### 1️⃣ 로그인
 GitHub 조직 멤버만 로그인할 수 있어요.
 
-<img src="docs/screenshots/01-login.png" width="800" alt="로그인">
-
 ### 2️⃣ 서버 상태 확인
 EC2 · 앱 헬스 · 모니터링 상태와 작업 이력을 한눈에 볼 수 있어요.
 
