@@ -27,6 +27,8 @@ export interface HistoryItem {
   user: string
   action: HistoryAction
   result: 'SUCCESS' | 'FAILURE'
+  /** 서버를 끈 사유 등 부가 설명, 없으면 생략 */
+  reason?: string
 }
 
 export interface AuthUser {
@@ -42,6 +44,6 @@ export interface AuthSession {
 export interface ServerApi {
   getStatus(): Promise<ServerStatus>
   start(): Promise<void>
-  stop(): Promise<void>
+  stop(reason: string): Promise<void>
   getHistory(limit?: number): Promise<HistoryItem[]>
 }

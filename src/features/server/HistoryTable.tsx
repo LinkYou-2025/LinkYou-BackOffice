@@ -6,7 +6,7 @@ import { formatDateTime } from '@/lib/format'
 import { HISTORY_LIMIT, useServerHistory } from './hooks'
 import { HISTORY_ACTION_LABELS } from './labels'
 
-const COLUMNS = ['사용자', '시각', '동작', '결과']
+const COLUMNS = ['사용자', '시각', '동작', '사유', '결과']
 
 function Row({ item }: { item: HistoryItem }) {
   return (
@@ -19,6 +19,9 @@ function Row({ item }: { item: HistoryItem }) {
       </td>
       <td className="px-6 py-3 text-muted">{formatDateTime(item.at)}</td>
       <td className="px-6 py-3">{HISTORY_ACTION_LABELS[item.action]}</td>
+      <td className="max-w-[260px] truncate px-6 py-3 text-muted" title={item.reason}>
+        {item.reason ?? '-'}
+      </td>
       <td className="px-6 py-3">
         <Badge tone={item.result === 'SUCCESS' ? 'success' : 'danger'}>
           {item.result === 'SUCCESS' ? '성공' : '실패'}
@@ -67,7 +70,7 @@ export function HistoryTable() {
         <p className="text-xs text-subtle">최근 {HISTORY_LIMIT}건</p>
       </div>
       <div className="mt-4 overflow-x-auto">
-        <table className="w-full min-w-[520px] text-left text-xs">
+        <table className="w-full min-w-[640px] text-left text-xs">
           <caption className="sr-only">서버 제어 작업 이력</caption>
           <thead className="text-muted">
             <tr>

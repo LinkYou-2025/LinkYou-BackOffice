@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Power } from 'lucide-react'
 import type { ServerAction, ServerStatus } from '@/api/types'
 import { Button } from '@/components/ui/Button'
@@ -9,6 +9,7 @@ import { cn } from '@/lib/cn'
 import { buildSteps, derivePhase, isFlowComplete } from './flow'
 import { STATUS_POLL_MS, useServerAction } from './hooks'
 import { ProgressSteps } from './ProgressSteps'
+import { isValidReason, normalizeReason, REASON_MAX } from './reason'
 
 /** 요청 후 이 시간 안에 끝나지 않으면 "처리 중" 표시를 풀고 직접 확인하도록 안내한다. */
 const FLOW_TIMEOUT_MS = 3 * 60_000
@@ -41,6 +42,9 @@ export function ServerControlPanel({ status, isLoading, isError }: ServerControl
   const toast = useToast()
   const action = useServerAction()
   const [confirming, setConfirming] = useState<ServerAction | null>(null)
+  // 서버를 끌 때 입력하는 사유, 이력에 기록되어 나중에 왜 꺼졌는지 확인하는 용도
+  const [reason, setReason] = useState('')
+  const reasonInputRef = useRef<HTMLInputElement>(null)
   // 이 화면에서 요청한 동작. 상태가 목표에 도달할 때까지 진행 단계를 보여준다.
   const [submitted, setSubmitted] = useState<ServerAction | null>(null)
 
@@ -67,17 +71,32 @@ export function ServerControlPanel({ status, isLoading, isError }: ServerControl
     return () => clearTimeout(timer)
   }, [submitted, toast])
 
+  // 끄기 확인창이 열리면 사유 입력칸으로 바로 포커스
+  useEffect(() => {
+    if (confirming === 'STOP') reasonInputRef.current?.focus()
+  }, [confirming])
+
+  function closeConfirm() {
+    setConfirming(null)
+    setReason('')
+  }
+
   function handleConfirm() {
-    if (!confirming) return
+    if (!confirming || action.isPending) return
+    if (confirming === 'STOP' && !isValidReason(reason)) return
+
     const target = confirming
-    action.mutate(target, {
-      onSuccess: () => {
-        setSubmitted(target)
-        toast.info(target === 'START' ? '서버 켜기를 요청했어요.' : '서버 끄기를 요청했어요.')
+    action.mutate(
+      { action: target, reason: target === 'STOP' ? normalizeReason(reason) : undefined },
+      {
+        onSuccess: () => {
+          setSubmitted(target)
+          toast.info(target === 'START' ? '서버 켜기를 요청했어요.' : '서버 끄기를 요청했어요.')
+        },
+        onError: (error) => toast.error(error.message),
+        onSettled: closeConfirm,
       },
-      onError: (error) => toast.error(error.message),
-      onSettled: () => setConfirming(null),
-    })
+    )
   }
 
   let control: ReactNode
@@ -165,9 +184,33 @@ export function ServerControlPanel({ status, isLoading, isError }: ServerControl
         confirmLabel={confirming ? ACTION_COPY[confirming].confirm : ''}
         tone={confirming ? ACTION_COPY[confirming].tone : 'primary'}
         loading={action.isPending}
+        confirmDisabled={confirming === 'STOP' && !isValidReason(reason)}
         onConfirm={handleConfirm}
-        onCancel={() => setConfirming(null)}
-      />
+        onCancel={closeConfirm}
+      >
+        {confirming === 'STOP' && (
+          <div className="mt-4">
+            <label htmlFor="stop-reason" className="text-xs text-muted">
+              끄는 사유
+            </label>
+            <input
+              id="stop-reason"
+              ref={reasonInputRef}
+              value={reason}
+              maxLength={REASON_MAX}
+              onChange={(event) => setReason(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') handleConfirm()
+              }}
+              placeholder="예: 야간 비용 절감, 테스트 종료"
+              className="mt-1.5 h-[42px] w-full rounded border border-border bg-bg px-3 text-sm text-white placeholder:text-subtle focus-visible:outline-2 focus-visible:outline-primary"
+            />
+            <p className="mt-1 text-right text-xs text-subtle">
+              {normalizeReason(reason).length}/{REASON_MAX}
+            </p>
+          </div>
+        )}
+      </ConfirmDialog>
     </Card>
   )
 }

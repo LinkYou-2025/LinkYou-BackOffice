@@ -5,7 +5,7 @@ import type { ServerApi } from './types'
 const httpServerApi: ServerApi = {
   getStatus: () => request('/status'),
   start: () => request('/start', { method: 'POST' }),
-  stop: () => request('/stop', { method: 'POST' }),
+  stop: (reason) => request('/stop', { method: 'POST', body: JSON.stringify({ reason }) }),
   getHistory: (limit = 20) => request(`/history?limit=${limit}`),
 }
 

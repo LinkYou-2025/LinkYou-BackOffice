@@ -5,10 +5,14 @@ interface ConfirmDialogProps {
   open: boolean
   title: string
   description: ReactNode
+  /** 설명 아래에 넣을 추가 입력 영역 (예: 사유 입력) */
+  children?: ReactNode
   confirmLabel: string
   cancelLabel?: string
   tone?: 'primary' | 'danger'
   loading?: boolean
+  /** 입력이 올바르지 않을 때 확인 버튼 비활성화 */
+  confirmDisabled?: boolean
   onConfirm: () => void
   onCancel: () => void
 }
@@ -18,10 +22,12 @@ export function ConfirmDialog({
   open,
   title,
   description,
+  children,
   confirmLabel,
   cancelLabel = '취소',
   tone = 'primary',
   loading = false,
+  confirmDisabled = false,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -50,11 +56,17 @@ export function ConfirmDialog({
       <div className="p-6">
         <h2 className="text-lg font-medium">{title}</h2>
         <div className="mt-2 text-sm leading-relaxed text-muted">{description}</div>
+        {children}
         <div className="mt-6 flex justify-end gap-2">
           <Button variant="secondary" onClick={onCancel} disabled={loading}>
             {cancelLabel}
           </Button>
-          <Button variant={tone === 'danger' ? 'danger' : 'primary'} onClick={onConfirm} loading={loading}>
+          <Button
+            variant={tone === 'danger' ? 'danger' : 'primary'}
+            onClick={onConfirm}
+            loading={loading}
+            disabled={confirmDisabled}
+          >
             {confirmLabel}
           </Button>
         </div>
