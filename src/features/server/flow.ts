@@ -1,3 +1,4 @@
+import { SWITCH_MODE } from '@/api/client'
 import type { ServerAction, ServerStatus } from '@/api/types'
 
 /** EC2 상태 기준의 큰 단계. 앱 헬스·모니터링은 진행 단계(steps)에서 따로 본다. */
@@ -51,6 +52,15 @@ function toSteps(defs: StepDef[]): Step[] {
  * (끌 때는 알람이 울리지 않도록 모니터링을 먼저 끄고, 켤 때는 앱이 뜬 뒤에 모니터링을 켠다)
  */
 export function buildSteps(action: ServerAction, status: ServerStatus): Step[] {
+  // 스위치 API 는 앱 헬스·모니터링 상태를 주지 않아서 EC2 상태만 따라간다. (알람 무음은 서버 쪽에서 자동 처리)
+  if (SWITCH_MODE) {
+    const reached = action === 'START' ? status.ec2 === 'running' : status.ec2 === 'stopped'
+    return toSteps([
+      { key: 'ec2', label: action === 'START' ? 'EC2 시작' : 'EC2 중지', done: reached },
+      { key: 'done', label: '완료', done: reached },
+    ])
+  }
+
   if (action === 'START') {
     const ec2Up = status.ec2 === 'running'
     const appUp = ec2Up && status.app === 'up'

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog'
 import { useToast } from '@/components/ui/Toast'
+import { SWITCH_MODE } from '@/api/client'
 import { cn } from '@/lib/cn'
 import { buildSteps, derivePhase, isFlowComplete } from './flow'
 import { STATUS_POLL_MS, useServerAction } from './hooks'
@@ -48,6 +49,9 @@ export function ServerControlPanel({ status, isLoading, isError }: ServerControl
   // 이 화면에서 요청한 동작. 상태가 목표에 도달할 때까지 진행 단계를 보여준다.
   const [submitted, setSubmitted] = useState<ServerAction | null>(null)
 
+  // 스위치 API 는 끄기 사유를 받지 않는다.
+  const needsReason = confirming === 'STOP' && !SWITCH_MODE
+
   const phase = status ? derivePhase(status) : 'UNKNOWN'
   const inFlight: ServerAction | null = phase === 'STARTING' ? 'START' : phase === 'STOPPING' ? 'STOP' : null
   const flowAction = submitted ?? inFlight
@@ -83,11 +87,11 @@ export function ServerControlPanel({ status, isLoading, isError }: ServerControl
 
   function handleConfirm() {
     if (!confirming || action.isPending) return
-    if (confirming === 'STOP' && !isValidReason(reason)) return
+    if (needsReason && !isValidReason(reason)) return
 
     const target = confirming
     action.mutate(
-      { action: target, reason: target === 'STOP' ? normalizeReason(reason) : undefined },
+      { action: target, reason: needsReason ? normalizeReason(reason) : undefined },
       {
         onSuccess: () => {
           setSubmitted(target)
@@ -184,11 +188,11 @@ export function ServerControlPanel({ status, isLoading, isError }: ServerControl
         confirmLabel={confirming ? ACTION_COPY[confirming].confirm : ''}
         tone={confirming ? ACTION_COPY[confirming].tone : 'primary'}
         loading={action.isPending}
-        confirmDisabled={confirming === 'STOP' && !isValidReason(reason)}
+        confirmDisabled={needsReason && !isValidReason(reason)}
         onConfirm={handleConfirm}
         onCancel={closeConfirm}
       >
-        {confirming === 'STOP' && (
+        {needsReason && (
           <div className="mt-4">
             <label htmlFor="stop-reason" className="text-xs text-muted">
               끄는 사유

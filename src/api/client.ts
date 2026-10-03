@@ -13,6 +13,12 @@ const baseUrl = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
 /** true 일 때만 mock 을 쓴다. 값이 비어 있다고 몰래 mock 으로 떨어지지 않게 한다. */
 export const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true'
 
+/**
+ * true 이면 dev 서버 스위치 API(`/status`, `/start`, `/stop` + `?secret=`)를 쓴다.
+ * 로그인과 이력이 없는 API 라서 로그인 화면, 이력 표, 끄기 사유 입력을 모두 숨긴다.
+ */
+export const SWITCH_MODE = import.meta.env.VITE_API_MODE === 'switch'
+
 interface ClientHandlers {
   getToken: () => string | null
   onUnauthorized: () => void

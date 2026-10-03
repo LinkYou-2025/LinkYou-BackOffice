@@ -1,3 +1,4 @@
+import { SWITCH_MODE } from '@/api/client'
 import { PageHeader } from '@/components/layout/PageHeader'
 import { useAuth } from '@/features/auth/AuthContext'
 import { HistoryTable } from '@/features/server/HistoryTable'
@@ -13,11 +14,11 @@ export function ServerPage() {
     <>
       <PageHeader
         title="서버 제어"
-        description={`${session?.user.login ?? ''}님, dev 서버를 켜고 끄고 상태를 확인할 수 있어요.`}
+        description={`${session ? `${session.user.login}님, ` : ''}dev 서버를 켜고 끄고 상태를 확인할 수 있어요.`}
       />
       <StatusCards status={status.data} isLoading={status.isPending} />
       <ServerControlPanel status={status.data} isLoading={status.isPending} isError={status.isError} />
-      <HistoryTable />
+      {!SWITCH_MODE && <HistoryTable />}
     </>
   )
 }
