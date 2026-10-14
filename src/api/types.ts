@@ -5,16 +5,14 @@
 
 export type Ec2State = 'pending' | 'running' | 'stopping' | 'stopped' | 'unknown'
 export type AppHealth = 'up' | 'down' | 'unknown'
-export type MonitoringState = 'active' | 'muted' | 'unknown'
 
 export type ServerAction = 'START' | 'STOP'
 
 export interface ServerStatus {
   ec2: Ec2State
   app: AppHealth
-  monitoring: MonitoringState
-  /** ISO-8601 */
-  updatedAt: string
+  /** Lambda 가 상태를 확인한 시각 (ISO-8601) */
+  checkedAt: string
 }
 
 export type HistoryAction = ServerAction | 'LOGIN' | 'LOGIN_DENIED'
