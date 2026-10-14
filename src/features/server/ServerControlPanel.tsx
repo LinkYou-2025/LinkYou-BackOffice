@@ -20,13 +20,13 @@ const ACTION_COPY: Record<
 > = {
   START: {
     title: 'dev 서버를 켤까요?',
-    description: 'EC2를 시작하고, 앱이 정상 응답하면 모니터링 알람을 다시 켭니다. 보통 1~2분 걸려요.',
+    description: 'EC2를 시작하고 앱이 정상 응답할 때까지 기다립니다. 보통 1~2분 걸려요.',
     confirm: '서버 켜기',
     tone: 'primary',
   },
   STOP: {
     title: 'dev 서버를 끄시겠어요?',
-    description: '모니터링 알람을 먼저 끈 뒤 EC2를 중지합니다. 진행 중인 개발·테스트가 중단될 수 있어요.',
+    description: 'EC2를 중지합니다. 진행 중인 개발·테스트가 중단될 수 있어요.',
     confirm: '서버 끄기',
     tone: 'danger',
   },

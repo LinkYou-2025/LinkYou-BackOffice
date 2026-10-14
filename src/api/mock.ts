@@ -10,15 +10,15 @@ import type {
 /*
  * 백엔드 없이 화면을 개발하기 위한 메모리 mock.
  * 실제 Lambda 와 같은 순서로 상태가 바뀌도록 흉내 낸다.
- *   STOP : 모니터링 무음 → EC2 stopping → stopped
- *   START: EC2 pending → running → 앱 up → 모니터링 active
+ *   STOP : EC2 stopping → stopped
+ *   START: EC2 pending → running → 앱 up
  */
 
 const MOCK_USER = 'octocat'
 
-type MockState = Pick<ServerStatus, 'ec2' | 'app' | 'monitoring'>
+type MockState = Pick<ServerStatus, 'ec2' | 'app'>
 
-const state: MockState = { ec2: 'running', app: 'up', monitoring: 'active' }
+const state: MockState = { ec2: 'running', app: 'up' }
 
 const history: HistoryItem[] = [
   { id: 'seed-3', at: minutesAgo(35), user: 'octocat', action: 'START', result: 'SUCCESS' },
@@ -54,7 +54,7 @@ function record(action: HistoryAction, reason?: string) {
 export const mockServerApi: ServerApi = {
   async getStatus() {
     await delay(200)
-    return { ...state, updatedAt: new Date().toISOString() }
+    return { ...state, checkedAt: new Date().toISOString() }
   },
 
   async start() {
@@ -70,9 +70,6 @@ export const mockServerApi: ServerApi = {
     later(6_000, () => {
       state.app = 'up'
     })
-    later(8_000, () => {
-      state.monitoring = 'active'
-    })
   },
 
   async stop(reason) {
@@ -84,13 +81,10 @@ export const mockServerApi: ServerApi = {
       throw new ApiError(409, '서버가 이미 꺼져 있거나 전환 중이에요.')
     }
     record('STOP', reason.trim())
-    state.monitoring = 'muted'
-    later(1_500, () => {
-      state.ec2 = 'stopping'
-    })
-    later(5_000, () => {
+    state.ec2 = 'stopping'
+    later(3_500, () => {
       state.ec2 = 'stopped'
-      state.app = 'unknown'
+      state.app = 'down'
     })
   },
 

@@ -14,7 +14,7 @@ LinkYou 프로젝트의 인프라 관리 & 서비스 운영을 위한 BackOffice
 GitHub 조직 멤버만 로그인할 수 있어요.
 
 ### 2️⃣ 서버 상태 확인
-EC2 · 앱 헬스 · 모니터링 상태와 작업 이력(누가, 언제, 무엇을, 왜)을 한눈에 볼 수 있어요.
+EC2 · 앱 헬스 상태와 작업 이력(누가, 언제, 무엇을, 왜)을 한눈에 볼 수 있어요.
 
 <img src="docs/screenshots/02-server-on.png" width="800" alt="서버 제어 (켜짐)">
 
@@ -23,7 +23,7 @@ EC2 · 앱 헬스 · 모니터링 상태와 작업 이력(누가, 언제, 무엇
 
 <img src="docs/screenshots/03-confirm-stop.png" width="800" alt="서버 끄기 확인">
 
-확인하면 **모니터링 끄기 → EC2 중지 → 완료** 순서로 진행돼요. 알람이 울리지 않도록 모니터링을 먼저 꺼요.
+확인하면 **EC2 중지 → 완료** 순서로 진행돼요. EC2가 멈추면 Grafana 알림은 자동으로 무음 처리돼요.
 
 <img src="docs/screenshots/04-stopping.png" width="800" alt="서버 끄는 중">
 
@@ -32,7 +32,7 @@ EC2 · 앱 헬스 · 모니터링 상태와 작업 이력(누가, 언제, 무엇
 
 <img src="docs/screenshots/05-server-off.png" width="800" alt="서버 제어 (꺼짐)">
 
-**EC2 시작 → 앱 헬스 확인 → 모니터링 켜기 → 완료** 순서로 진행돼요.
+**EC2 시작 → 앱 헬스 확인 → 완료** 순서로 진행돼요. EC2가 켜지면 Grafana 알림 무음도 자동으로 해제돼요.
 
 <img src="docs/screenshots/06-starting.png" width="800" alt="서버 켜는 중">
 

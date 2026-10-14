@@ -1,4 +1,4 @@
-import type { AppHealth, Ec2State, HistoryAction, MonitoringState } from '@/api/types'
+import type { AppHealth, Ec2State, HistoryAction } from '@/api/types'
 import type { Tone } from '@/components/ui/Badge'
 
 export interface LabelInfo {
@@ -24,12 +24,6 @@ export const APP_LABELS: Record<AppHealth, LabelInfo> = {
 
 /** EC2 가 꺼져 있으면 앱 헬스는 의미가 없으므로 빨간 "응답 없음" 대신 중립 표시를 쓴다. */
 export const APP_OFFLINE: LabelInfo = { label: '서버 꺼짐', tone: 'neutral', code: 'offline' }
-
-export const MONITORING_LABELS: Record<MonitoringState, LabelInfo> = {
-  active: { label: '수집 중', tone: 'success', code: 'active' },
-  muted: { label: '알람 무음', tone: 'warning', code: 'muted' },
-  unknown: { label: '확인 불가', tone: 'neutral', code: 'unknown' },
-}
 
 export const UNAVAILABLE: LabelInfo = { label: '확인 불가', tone: 'neutral', code: 'unknown' }
 
